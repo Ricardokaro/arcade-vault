@@ -64,18 +64,35 @@ const HIGHLIGHTS = [
 export default function AcercaDePage() {
   useScrollReveal();
 
-  const [form, setForm] = useState({ name: "", email: "", msg: "" });
+  const [form, setForm] = useState({ name: "", email: "", msg: "", honeypot: "" });
   const [sent, setSent] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.msg.trim()) {
       setShake(true);
       setTimeout(() => setShake(false), 400);
       return;
     }
-    setSent(form.name.trim());
+
+    setSending(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/contacto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setSent(form.name.trim());
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -134,8 +151,43 @@ export default function AcercaDePage() {
           </div>
 
           <form className={"contact-form" + (shake ? " shake" : "")} onSubmit={onSubmit}>
-            {!sent ? (
+            {error ? (
+              <div className="terminal-success">
+                <div className="term-bar">
+                  <span className="dot r"></span>
+                  <span className="dot y"></span>
+                  <span className="dot g"></span>
+                  <span className="term-title">VAULT-OS // TERMINAL</span>
+                </div>
+                <div className="term-body">
+                  <div className="line">
+                    <span className="prompt">vault@arcade:~$</span> ./send_message --to=team
+                  </div>
+                  <div className="line dim">[OK] Conectando con servidor…</div>
+                  <div className="line error">[ERROR] FALLO DE CONEXIÓN CON EL SERVIDOR</div>
+                  <div className="line error">
+                    &gt; NO SE PUDO ENVIAR EL MENSAJE. INTÉNTALO DE NUEVO.
+                    <span className="caret">_</span>
+                  </div>
+                  <div style={{ marginTop: 18 }}>
+                    <button className="btn ghost" type="button" onClick={() => setError(false)}>
+                      REINTENTAR
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : !sent ? (
               <>
+                <input
+                  type="text"
+                  name="_gotcha"
+                  value={form.honeypot}
+                  onChange={(e) => setForm({ ...form, honeypot: e.target.value })}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
                 <div className="field">
                   <label>NOMBRE</label>
                   <input
@@ -162,8 +214,8 @@ export default function AcercaDePage() {
                     placeholder="Cuéntanos qué tienes en mente…"
                   ></textarea>
                 </div>
-                <button className="btn xl press" type="submit" style={{ width: "100%" }}>
-                  ▶ ENVIAR MENSAJE
+                <button className="btn xl press" type="submit" style={{ width: "100%" }} disabled={sending}>
+                  {sending ? "▶ ENVIANDO…" : "▶ ENVIAR MENSAJE"}
                 </button>
               </>
             ) : (
@@ -191,7 +243,7 @@ export default function AcercaDePage() {
                       type="button"
                       onClick={() => {
                         setSent(null);
-                        setForm({ name: "", email: "", msg: "" });
+                        setForm({ name: "", email: "", msg: "", honeypot: "" });
                       }}
                     >
                       ENVIAR OTRO MENSAJE
