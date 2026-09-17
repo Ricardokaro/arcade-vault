@@ -1,6 +1,6 @@
 # SPEC 02 — Landing page (Home) y página Acerca de
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-09-17
 > **Objective:** Convertir `/` en la landing page de marketing del prototipo (`home.jsx`), mover la biblioteca de juegos actual a `/games`, y agregar una página `/acerca-de` con misión del proyecto y formulario de contacto mock (`about.jsx`).
@@ -53,22 +53,22 @@ Los datos del ticker de actividad y del top de jugadores del home (`home.jsx`, a
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` levanta la app sin errores en la consola del navegador ni del servidor.
-- [ ] `/` muestra la landing completa: hero con CTAs, sección de features (4 tarjetas), preview de 6 juegos, sección de stats, sección de actividad en vivo (ticker + top 5), sección de pricing con FAQ, y CTA final.
-- [ ] El botón "EXPLORAR JUEGOS" del hero y "VER TODOS LOS JUEGOS" de la sección de preview navegan a `/games`.
-- [ ] El botón "CREAR CUENTA" del hero y "EMPEZAR GRATIS" de pricing navegan a `/login`.
-- [ ] Las tarjetas de la sección de preview navegan a `/juego/[id]` del juego correspondiente.
-- [ ] `/games` muestra el mismo contenido que antes mostraba `/` (hero de biblioteca, buscador, chips de categoría, grid de 8 juegos).
-- [ ] `/acerca-de` muestra la sección de misión, los 3 highlights, y el formulario de contacto.
-- [ ] Enviar el formulario de contacto con algún campo vacío dispara la animación de "shake" y no avanza.
-- [ ] Enviar el formulario completo muestra la vista de "terminal" de éxito con el nombre ingresado, sin llamada de red.
-- [ ] El botón "ENVIAR OTRO MENSAJE" de la vista de éxito vuelve al formulario vacío.
-- [ ] El Nav muestra 4 links en orden: Inicio, Biblioteca, Salón de la Fama, Acerca de — cada uno resalta como activo en su ruta.
-- [ ] El link "Biblioteca" del Nav y el logo apuntan a `/games`; el link "Inicio" apunta a `/`.
-- [ ] Tras iniciar sesión o entrar como invitado desde `/login`, la app redirige a `/games` (no a `/`).
-- [ ] El botón "Volver al Vault" en `/juego/[id]`, el botón de volver en `/salon`, y el botón de salir en `/jugar/[id]` navegan a `/games`.
-- [ ] El menú móvil (hamburguesa) incluye los 4 links en el mismo orden que el nav de escritorio.
-- [ ] Ninguna pantalla implementa lógica de juego real ni envío real de datos a un backend.
+- [x] `npm run dev` levanta la app sin errores en la consola del navegador ni del servidor.
+- [x] `/` muestra la landing completa: hero con CTAs, sección de features (4 tarjetas), preview de 6 juegos, sección de stats, sección de actividad en vivo (ticker + top 5), sección de pricing con FAQ, y CTA final.
+- [x] El botón "EXPLORAR JUEGOS" del hero y "VER TODOS LOS JUEGOS" de la sección de preview navegan a `/games`.
+- [x] El botón "CREAR CUENTA" del hero y "EMPEZAR GRATIS" de pricing navegan a `/login`.
+- [x] Las tarjetas de la sección de preview navegan a `/juego/[id]` del juego correspondiente.
+- [x] `/games` muestra el mismo contenido que antes mostraba `/` (hero de biblioteca, buscador, chips de categoría, grid de 8 juegos).
+- [x] `/acerca-de` muestra la sección de misión, los 3 highlights, y el formulario de contacto.
+- [x] Enviar el formulario de contacto con algún campo vacío dispara la animación de "shake" y no avanza.
+- [x] Enviar el formulario completo muestra la vista de "terminal" de éxito con el nombre ingresado, sin llamada de red.
+- [x] El botón "ENVIAR OTRO MENSAJE" de la vista de éxito vuelve al formulario vacío.
+- [x] El Nav muestra 4 links en orden: Inicio, Biblioteca, Salón de la Fama, Acerca de — cada uno resalta como activo en su ruta.
+- [x] El link "Biblioteca" del Nav y el logo apuntan a `/games`; el link "Inicio" apunta a `/`.
+- [x] Tras iniciar sesión o entrar como invitado desde `/login`, la app redirige a `/games` (no a `/`).
+- [x] El botón "Volver al Vault" en `/juego/[id]`, el botón de volver en `/salon`, y el botón de salir en `/jugar/[id]` navegan a `/games`.
+- [x] El menú móvil (hamburguesa) incluye los 4 links en el mismo orden que el nav de escritorio.
+- [x] Ninguna pantalla implementa lógica de juego real ni envío real de datos a un backend.
 
 ## Decisiones
 

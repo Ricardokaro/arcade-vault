@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual de pantallas de Arcade Vault
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** (ninguno, primer spec del proyecto)
 > **Date:** 2026-09-15
 > **Objective:** Implementar como rutas reales de Next.js las 5 pantallas del prototipo (biblioteca, detalle, reproductor, login/registro y salón de la fama) con datos mock y sesión simulada en localStorage, sin lógica de juego real.
@@ -86,23 +86,23 @@ Conventions:
 
 ## Acceptance criteria
 
-- [ ] `npm run dev` levanta la app sin errores en la consola del navegador ni del servidor.
-- [ ] La ruta `/` muestra el grid de los 8 juegos de `GAMES`, con buscador por texto y filtro por categoría funcionando en el cliente.
-- [ ] Cada tarjeta de juego navega a `/juego/[id]` con el `id` correspondiente.
-- [ ] `/juego/[id]` muestra la info del juego y una tabla de mejores puntuaciones generada con `seededScores`.
-- [ ] El botón "JUGAR AHORA" en `/juego/[id]` navega a `/jugar/[id]`.
-- [ ] `/jugar/[id]` muestra el HUD, el marco CRT y una puntuación que se incrementa automáticamente mientras no está en pausa ni terminada la partida.
-- [ ] El botón "PAUSA" detiene el incremento de puntuación y "REANUDAR" lo retoma.
-- [ ] El botón "FIN" abre el modal de fin de partida con la puntuación final.
-- [ ] Guardar la puntuación en el modal la persiste en `localStorage` bajo `av_scores` y muestra el mensaje "PUNTUACIÓN GUARDADA".
-- [ ] `/login` permite alternar entre "Iniciar sesión" y "Crear cuenta"; enviar el formulario guarda el usuario en `localStorage` (`av_user`) y redirige a `/`.
-- [ ] Tras iniciar sesión, el Nav muestra el nombre de usuario en lugar del botón "Iniciar Sesión" en cualquier ruta.
-- [ ] El botón "JUGAR COMO INVITADO" en `/login` navega a `/` sin crear sesión.
-- [ ] Cerrar sesión desde el Nav borra `av_user` de `localStorage` y el Nav vuelve a mostrar "Iniciar Sesión".
-- [ ] `/salon` muestra podio (top 3), tabla de puntuaciones y tabs para cambiar de juego.
-- [ ] Con sesión iniciada, `/salon` muestra la fila "tu mejor marca" para el juego seleccionado.
-- [ ] El menú móvil (hamburguesa) abre y cierra el panel de navegación en pantallas angostas.
-- [ ] Ninguna pantalla implementa lógica de juego real (sin detección de colisiones ni controles de teclado/táctil para jugar).
+- [x] `npm run dev` levanta la app sin errores en la consola del navegador ni del servidor.
+- [x] La ruta `/` muestra el grid de los 8 juegos de `GAMES`, con buscador por texto y filtro por categoría funcionando en el cliente.
+- [x] Cada tarjeta de juego navega a `/juego/[id]` con el `id` correspondiente.
+- [x] `/juego/[id]` muestra la info del juego y una tabla de mejores puntuaciones generada con `seededScores`.
+- [x] El botón "JUGAR AHORA" en `/juego/[id]` navega a `/jugar/[id]`.
+- [x] `/jugar/[id]` muestra el HUD, el marco CRT y una puntuación que se incrementa automáticamente mientras no está en pausa ni terminada la partida.
+- [x] El botón "PAUSA" detiene el incremento de puntuación y "REANUDAR" lo retoma.
+- [x] El botón "FIN" abre el modal de fin de partida con la puntuación final.
+- [x] Guardar la puntuación en el modal la persiste en `localStorage` bajo `av_scores` y muestra el mensaje "PUNTUACIÓN GUARDADA".
+- [x] `/login` permite alternar entre "Iniciar sesión" y "Crear cuenta"; enviar el formulario guarda el usuario en `localStorage` (`av_user`) y redirige a `/`.
+- [x] Tras iniciar sesión, el Nav muestra el nombre de usuario en lugar del botón "Iniciar Sesión" en cualquier ruta.
+- [x] El botón "JUGAR COMO INVITADO" en `/login` navega a `/` sin crear sesión.
+- [x] Cerrar sesión desde el Nav borra `av_user` de `localStorage` y el Nav vuelve a mostrar "Iniciar Sesión".
+- [x] `/salon` muestra podio (top 3), tabla de puntuaciones y tabs para cambiar de juego.
+- [x] Con sesión iniciada, `/salon` muestra la fila "tu mejor marca" para el juego seleccionado.
+- [x] El menú móvil (hamburguesa) abre y cierra el panel de navegación en pantallas angostas.
+- [x] Ninguna pantalla implementa lógica de juego real (sin detección de colisiones ni controles de teclado/táctil para jugar).
 
 ## Decisiones
 
