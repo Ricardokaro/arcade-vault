@@ -4,15 +4,7 @@ export interface StoredUser {
   name: string;
 }
 
-export interface StoredScoreEntry {
-  game: string;
-  score: number;
-  name: string;
-  at: number;
-}
-
 const USER_KEY = "av_user";
-const SCORES_KEY = "av_scores";
 
 // Cache + suscripción para exponer la sesión vía useSyncExternalStore,
 // evitando el parpadeo de hidratación de leer localStorage en un efecto.
@@ -72,20 +64,4 @@ export function clearUser(): void {
     localStorage.removeItem(USER_KEY);
   } catch {}
   notifyUserListeners();
-}
-
-export function getScores(): StoredScoreEntry[] {
-  try {
-    return JSON.parse(localStorage.getItem(SCORES_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-export function addScore(entry: Omit<StoredScoreEntry, "at">): void {
-  try {
-    const all = getScores();
-    all.push({ ...entry, at: Date.now() });
-    localStorage.setItem(SCORES_KEY, JSON.stringify(all));
-  } catch {}
 }

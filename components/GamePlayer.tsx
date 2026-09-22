@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Game } from "@/lib/data";
-import { addScore } from "@/lib/storage";
+import { createClient } from "@/lib/supabase/client";
+import { insertScore } from "@/lib/games/queries";
 import { useUser } from "@/components/UserProvider";
 import { REAL_GAMES } from "@/lib/games/registry";
 export default function GamePlayer({ game }: { game: Game }) {
@@ -17,15 +18,29 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [over, setOver] = useState(false);
   const [customName, setCustomName] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const level = RealGame ? levelReal : 1 + Math.floor(score / 2500);
   const displayName = customName ?? (user ? user.name : "INVITADO");
   useEffect(() => {
     if (RealGame) return; // los juegos reales reportan su propio score vía callbacks
     if (over || paused) return;
-    const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
+    const t = setInterval(
+      () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
+      220,
+    );
     return () => clearInterval(t);
   }, [over, paused, RealGame]);
   const endGame = () => setOver(true);
+  const saveScore = () => {
+    setSending(true);
+    setSaveError(false);
+    const supabase = createClient();
+    insertScore(supabase, { gameId: game.id, playerName: displayName, score })
+      .then(() => setSaved(true))
+      .catch(() => setSaveError(true))
+      .finally(() => setSending(false));
+  };
   const restart = () => {
     setScore(0);
     setLives(3);
@@ -33,6 +48,7 @@ export default function GamePlayer({ game }: { game: Game }) {
     setPaused(false);
     setOver(false);
     setSaved(false);
+    setSaveError(false);
     setCustomName(null);
     setResetSignal((n) => n + 1);
   };
@@ -66,7 +82,10 @@ export default function GamePlayer({ game }: { game: Game }) {
           <button className="btn magenta" onClick={endGame}>
             FIN
           </button>
-          <button className="btn ghost" onClick={() => router.push(`/juego/${game.id}`)}>
+          <button
+            className="btn ghost"
+            onClick={() => router.push(`/juego/${game.id}`)}
+          >
             SALIR
           </button>
         </div>
@@ -92,14 +111,22 @@ export default function GamePlayer({ game }: { game: Game }) {
             </div>
           )}
           {paused && (
-            <div className="crt-content" style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}>
+            <div
+              className="crt-content"
+              style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}
+            >
               <div>
                 <div className="pixel neon-yellow" style={{ fontSize: 22 }}>
                   EN PAUSA
                 </div>
                 <div
                   className="mono"
-                  style={{ fontSize: 11, color: "var(--ink-dim)", marginTop: 10, letterSpacing: "0.16em" }}
+                  style={{
+                    fontSize: 11,
+                    color: "var(--ink-dim)",
+                    marginTop: 10,
+                    letterSpacing: "0.16em",
+                  }}
                 >
                   PULSA REANUDAR PARA CONTINUAR
                 </div>
@@ -123,27 +150,41 @@ export default function GamePlayer({ game }: { game: Game }) {
               <div className="input-row">
                 <input
                   value={displayName}
-                  onChange={(e) => setCustomName(e.target.value.toUpperCase().slice(0, 10))}
+                  onChange={(e) =>
+                    setCustomName(e.target.value.toUpperCase().slice(0, 10))
+                  }
                   placeholder="TUS INICIALES"
+                  disabled={sending}
                 />
                 <button
                   className="btn yellow"
-                  onClick={() => {
-                    addScore({ game: game.id, score, name: displayName });
-                    setSaved(true);
-                  }}
+                  onClick={saveScore}
+                  disabled={sending}
                 >
-                  GUARDAR PUNTUACIÓN
+                  {sending ? "GUARDANDO…" : "GUARDAR PUNTUACIÓN"}
                 </button>
               </div>
             ) : (
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
             )}
+            {saveError && (
+              <div className="toast-saved" style={{ color: "var(--magenta)" }}>
+                ▸ [ERROR] NO SE PUDO GUARDAR LA PUNTUACIÓN_
+                <div style={{ marginTop: 10 }}>
+                  <button className="btn ghost" onClick={saveScore}>
+                    REINTENTAR
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="actions">
               <button className="btn" onClick={restart}>
                 JUGAR DE NUEVO
               </button>
-              <button className="btn magenta" onClick={() => router.push("/games")}>
+              <button
+                className="btn magenta"
+                onClick={() => router.push("/games")}
+              >
                 VOLVER AL VAULT
               </button>
             </div>
@@ -152,4 +193,4 @@ export default function GamePlayer({ game }: { game: Game }) {
       )}
     </div>
   );
-}
+}
