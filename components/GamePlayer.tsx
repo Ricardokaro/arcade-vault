@@ -1,41 +1,41 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Game } from "@/lib/data";
 import { addScore } from "@/lib/storage";
 import { useUser } from "@/components/UserProvider";
-
+import { REAL_GAMES } from "@/lib/games/registry";
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useUser();
-
-  const lives = 3;
-
+  const RealGame = REAL_GAMES[game.id];
   const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [levelReal, setLevelReal] = useState(1);
+  const [resetSignal, setResetSignal] = useState(0);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
   const [customName, setCustomName] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-
-  const level = 1 + Math.floor(score / 2500);
+  const level = RealGame ? levelReal : 1 + Math.floor(score / 2500);
   const displayName = customName ?? (user ? user.name : "INVITADO");
-
   useEffect(() => {
+    if (RealGame) return; // los juegos reales reportan su propio score vía callbacks
     if (over || paused) return;
     const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
     return () => clearInterval(t);
-  }, [over, paused]);
-
+  }, [over, paused, RealGame]);
   const endGame = () => setOver(true);
   const restart = () => {
     setScore(0);
+    setLives(3);
+    setLevelReal(1);
     setPaused(false);
     setOver(false);
     setSaved(false);
     setCustomName(null);
+    setResetSignal((n) => n + 1);
   };
-
   return (
     <div className="av-player fade-in">
       <div className="player-hud">
@@ -71,16 +71,26 @@ export default function GamePlayer({ game }: { game: Game }) {
           </button>
         </div>
       </div>
-
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor"></div>
-            <div className="enemy e1"></div>
-            <div className="enemy e2"></div>
-            <div className="enemy e3"></div>
-            <div className="player-ship"></div>
-          </div>
+          {RealGame ? (
+            <RealGame
+              running={!paused && !over}
+              resetSignal={resetSignal}
+              onScoreChange={setScore}
+              onLivesChange={setLives}
+              onLevelChange={setLevelReal}
+              onGameOver={() => setOver(true)}
+            />
+          ) : (
+            <div className="game-arena">
+              <div className="grid-floor"></div>
+              <div className="enemy e1"></div>
+              <div className="enemy e2"></div>
+              <div className="enemy e3"></div>
+              <div className="player-ship"></div>
+            </div>
+          )}
           {paused && (
             <div className="crt-content" style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}>
               <div>
@@ -103,7 +113,6 @@ export default function GamePlayer({ game }: { game: Game }) {
           <span>CARGA · 1MB</span>
         </div>
       </div>
-
       {over && (
         <div className="modal-bd">
           <div className="modal">
@@ -143,4 +152,4 @@ export default function GamePlayer({ game }: { game: Game }) {
       )}
     </div>
   );
-}
+}

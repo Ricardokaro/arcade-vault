@@ -42,11 +42,11 @@ Usa siempre /frontend-design para diseñar la interfaz de usuario.
 
 - `/` (`app/page.tsx`) — biblioteca: grid de juegos con búsqueda y filtro por categoría.
 - `/juego/[id]` — detalle de un juego + leaderboard mock.
-- `/jugar/[id]` — reproductor: HUD, marco CRT, loop de puntuación falsa vía `setInterval` (sin lógica de juego real), guarda puntuación al finalizar con `addScore`.
+- `/jugar/[id]` — reproductor: HUD, marco CRT, guarda puntuación al finalizar con `addScore`. Para juegos sin motor real usa un loop de puntuación falsa vía `setInterval`; `components/GamePlayer.tsx` consulta `lib/games/registry.ts` y, si el `id` tiene una entrada ahí, monta ese motor real en vez del loop falso (ver más abajo).
 - `/login` — login/registro simulado contra `lib/storage.ts`, sin backend.
 - `/salon` — salón de la fama: podio + tabla por juego, con fila "tu mejor marca" si hay sesión.
 
-No hay lógica de juego real (colisiones, controles, física) para ninguno de los 8 juegos del catálogo — es fuera de alcance explícito del MVP actual (ver `specs/01-mvp-pantallas-visuales.md`).
+**Juegos reales:** el catálogo tenía 8 juegos sin lógica real (colisiones, controles, física) como alcance explícito del MVP (ver `specs/01-mvp-pantallas-visuales.md`). `rocas` es la primera excepción — su motor vive en `lib/games/rocas/engine.ts` (portado de `references/started-games/02-asteroids/`) con un wrapper React en `components/games/rocas/RocasGame.tsx`, registrado en `lib/games/registry.ts`. El contrato que debe implementar cada juego real está en `lib/games/types.ts` (`RealGameProps`). Los otros 7 juegos siguen sin lógica real hasta que se les porte su propio motor siguiendo el mismo patrón (ver `specs/05-juego-real-rocas.md`).
 
 **Estilos:** `app/globals.css` está portado casi tal cual desde `references/templates/styles.css` para preservar la identidad visual neón/píxel/CRT. Se prefiere extender ese CSS global (variables, animaciones, clases `av-*`/`cover-*`) antes que introducir utilidades de Tailwind nuevas para este look.
 
