@@ -32,6 +32,8 @@ Arcade Vault es un portal de juegos arcade con datos mock y sesión simulada (si
 
 Usa siempre /frontend-design para diseñar la interfaz de usuario.
 
+Usa `/real-game <id-de-catalogo> [ruta en references/started-games/NN-nombre | "desde cero"]` para portar o crear el motor real de un juego del catálogo (con o sin fuente en `references/started-games/`) e integrarlo con el leaderboard de Supabase, siguiendo el patrón motor/wrapper/registro de `specs/05-juego-real-rocas.md` y el flujo ya conectado de `specs/06-esquema-juegos-y-puntuaciones.md`/`specs/07-conectar-catalogo-y-leaderboard.md`. Antes de implementar, este skill lee `.agents/skills/spec/SKILL.md` y su `template.md` como referencia y genera su propio spec en `specs/NN-slug.md` con ese mismo formato.
+
 **Flujo de datos:**
 
 - `lib/data.ts` — datos mock puros: `GAMES`, `CATS`, `PLAYERS` y `seededScores(seed, count)` (genera leaderboards deterministas a partir de una semilla, sin llamadas a red ni estado).
