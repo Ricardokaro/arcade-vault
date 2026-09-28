@@ -9,7 +9,9 @@ import { REAL_GAMES } from "@/lib/games/registry";
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useUser();
-  const RealGame = REAL_GAMES[game.id];
+  const realEntry = REAL_GAMES[game.id];
+  const RealGame = realEntry?.Component;
+  const showLives = realEntry?.hasLives ?? true;
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [levelReal, setLevelReal] = useState(1);
@@ -66,10 +68,12 @@ export default function GamePlayer({ game }: { game: Game }) {
             <div className="l">Puntuación</div>
             <div className="v">{score.toLocaleString("es-ES")}</div>
           </div>
-          <div className="hud-stat lives">
-            <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
-          </div>
+          {showLives && (
+            <div className="hud-stat lives">
+              <div className="l">Vidas</div>
+              <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
+            </div>
+          )}
           <div className="hud-stat level">
             <div className="l">Nivel</div>
             <div className="v">{String(level).padStart(2, "0")}</div>
@@ -193,4 +197,4 @@ export default function GamePlayer({ game }: { game: Game }) {
       )}
     </div>
   );
-}
+}
